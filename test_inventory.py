@@ -148,7 +148,34 @@ def test_calculate_total_quantity_zero():
 
 # TODO: Write your Part C tests here
 
+@pytest.fixture
+def sample_products():
+    add_product("PID1", "Cup", 4, 10)
+    add_product("PID2", "Plate", 2, 20)
+    add_product("PID3", "Spoon", 1, 30)
+    return ["PID1", "PID2", "PID3"]
 
+def test_fixture_available_products(sample_products):
+    products = list_products()
+    assert len(products) == 3
+
+def test_fixture_productIDs_exist(sample_products):
+    product_ids = [p["product_id"] for p in list_products()]
+    for pid in sample_products:
+        assert pid in product_ids
+
+@pytest.mark.parametrize("total, quantity, expected", [
+    #I calculated the expected price manually here instead of using a math operation to do it, inshallah if used in future, i will try to be more practical
+    (100, 5, 100),     
+    (100, 10, 95),     
+    (200, 20, 190),    
+    (200, 30, 180),    
+    (300, 50, 255)     
+])
+
+def test_apply_bulk_discount(total, quantity, expected):
+    result = apply_bulk_discount(total, quantity)
+    assert result == expected
 # ============================================================
 # PART D - Mocking (5 marks)
 # Use @patch to mock _send_restock_alert.
