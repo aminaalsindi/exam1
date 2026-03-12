@@ -185,8 +185,19 @@ def test_apply_bulk_discount(total, quantity, expected):
 # ============================================================
 
 # TODO: Write your Part D tests here
+@patch("inventory._send_restock_alert")
+def test_restock_alert_called(mock_alert):
+    add_product("PID1", "Cup", 4, 6)
+    new_stock = update_stock("PID1", -3)
+    assert new_stock == 3
+    mock_alert.assert_called_once_with("PID1", "Cup", 3)
 
-
+@patch("inventory._send_restock_alert")
+def test_restock_alert_not_called(mock_alert):
+    add_product("PID1", "Cup", 4, 20)
+    new_stock = update_stock("PID1", -5)
+    assert new_stock == 15
+    mock_alert.assert_not_called()
 # ============================================================
 # PART E - Coverage (5 marks)
 # Run: pytest test_inventory.py --cov=inventory --cov-report=term-missing -v
