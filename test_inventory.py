@@ -108,7 +108,33 @@ def test_list_products_ids():
 
 # TODO: Write your Part B tests here
 
+def test_add_product_empty_product_id():
+    with pytest.raises(ValueError, match="Product ID and name are required"):
+        add_product("", "Cup", 4, 10)
 
+
+def test_add_product_empty_name():
+    with pytest.raises(ValueError, match="Product ID and name are required"):
+        add_product("PID1", "", 4, 10)
+
+
+def test_add_product_negative_price():
+    with pytest.raises(ValueError, match="Price must be positive"):
+        add_product("PID1", "Cup", -1, 10)
+
+def test_add_product_duplicate_product_id():
+    add_product("PID1", "Cup", 4, 10)
+    with pytest.raises(ValueError, match="already exists"):
+        add_product("PID1", "Plate", 2, 5)
+
+def test_update_stock_below_zero():
+    add_product("PID1", "Cup", 4, 10)
+    with pytest.raises(ValueError, match="Stock cannot go below zero"):
+        update_stock("PID1", -11)
+
+def test_calculate_total_quantity_zero():
+    with pytest.raises(ValueError, match="Quantity must be positive"):
+        calculate_total("PID1", 0)
 # ============================================================
 # PART C - Fixtures and Parametrize (10 marks)
 #
